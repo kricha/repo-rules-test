@@ -1,0 +1,19 @@
+name: Enforce Dev Only PRs to Main
+
+on:
+  pull_request:
+    branches:
+      - main  # Trigger only on PRs targeting main
+
+jobs:
+  check-source-branch:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check if PR source branch is dev
+        run: |
+          if [ "${{ github.head_ref }}" != "dev" ]; then
+            echo "Error: Only PRs from 'dev' branch are allowed to merge into 'main'."
+            exit 1
+          fi
+        # This step will fail the job if the source branch is not dev
