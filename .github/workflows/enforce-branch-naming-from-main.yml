@@ -1,0 +1,24 @@
+name: Enforce Branch Naming Convention
+
+on:
+  create:
+    branches:
+      - main  # Triggers only when branches are created based on `main`
+
+jobs:
+  enforce-branch-naming:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Enforce naming convention
+        env:
+          BRANCH_NAME: ${{ github.ref_name }}  # This is the name of the created branch
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Check if the branch name matches the required pattern
+          if [[ ! "$BRANCH_NAME" =~ ^hotfix/ ]] && [[ "$BRANCH_NAME" != "dev" ]]; then
+            echo "Branch '$BRANCH_NAME' does not follow the naming convention ('hotfix/**' or 'dev'). Deleting it."
+            # Delete the branch if it does not match 'hotfix/**' or 'dev'
+            git push origin --delete "$BRANCH_NAME"
+            exit 1
+          fi
