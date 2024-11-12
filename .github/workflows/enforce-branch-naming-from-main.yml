@@ -3,16 +3,19 @@ name: Enforce Branch Naming Convention
 on:
   create:
     branches:
-      - main  # Triggers only when branches are created based on `main`
+      - main  # Trigger only when a branch is created based on `main`
 
 jobs:
   enforce-branch-naming:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v3
+
       - name: Enforce naming convention
         env:
-          BRANCH_NAME: ${{ github.ref_name }}  # This is the name of the created branch
+          BRANCH_NAME: ${{ github.ref_name }}  # The name of the created branch
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           # Check if the branch name matches the required pattern
