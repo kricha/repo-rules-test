@@ -23,5 +23,5 @@ jobs:
             echo "Branch '$BRANCH_NAME' does not follow the naming convention ('hotfix/**' or 'dev'). Deleting it."
             # Delete the branch if it does not match 'hotfix/**' or 'dev'
             git push origin --delete "$BRANCH_NAME"
-            exit 1
+            exit 0  # Use exit 0 to mark the job as successful after deletion
           fi
