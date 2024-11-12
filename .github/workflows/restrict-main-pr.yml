@@ -1,4 +1,4 @@
-name: Enforce Dev Only PRs to Main
+name: Enforce Dev and Hotfix Only PRs to Main
 
 on:
   pull_request:
@@ -6,16 +6,15 @@ on:
       - main  # Trigger only on PRs targeting main
 
 jobs:
-  check-source-branch:
+  check-source-branch-for-main:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Check if PR source branch is dev
+      - name: Check if PR source branch is dev or hotfix/*
         env:
-          BRANCH_NAME: ${{ github.ref_name }}  # The name of the created branch
+          BRANCH_NAME: ${{ github.head_ref }}  # Source branch of the PR
         run: |
-          if [[ ! "$BRANCH_NAME" =~ ^hotfix/ ]] || [[ "$BRANCH_NAME" != "dev" ]]; then
-            echo "Error: Only PRs from 'dev' or 'hotfix/*' branch are allowed to merge into 'main'."
+          if [[ "$BRANCH_NAME" != "dev" && ! "$BRANCH_NAME" =~ ^hotfix/ ]]; then
+            echo "Error: Only PRs from 'dev' or 'hotfix/*' branches are allowed to merge into 'main'."
             exit 1
           fi
-        # This step will fail the job if the source branch is not dev
