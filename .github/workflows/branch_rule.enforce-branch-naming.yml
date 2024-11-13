@@ -22,7 +22,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           # Set the parent branch by finding the closest common ancestor branch
-          git show-branch
+          echo $(git show-branch)
           # git show-branch | grep '\*'
           # git show-branch | grep '\*' | grep -v "$(git rev-parse --abbrev-ref HEAD)"
           # git show-branch | grep '\*' | grep -v "$(git rev-parse --abbrev-ref HEAD)" | head -n1
