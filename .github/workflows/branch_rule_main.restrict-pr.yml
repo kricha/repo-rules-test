@@ -18,41 +18,16 @@ jobs:
       - name: Check if PR source branch is dev or hotfix/*
         env:
           CURRENT_BRANCH: ${{ github.head_ref }} # Source branch of the PR
+          PARENT_BRANCH: main
         run: |
-          CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
-
-          # Initialize variables to store the closest parent branch and minimum distance
-          PARENT_BRANCH=""
-          MIN_DISTANCE=""
-          
-          # Fetch all branches to ensure we have the latest references
           git fetch --all
-          
-          # Loop through all branches except the current branch
-          for branch in $(git for-each-ref --format='%(refname:short)' refs/heads/ refs/remotes/ | grep -v "$CURRENT_BRANCH"); do
-            # Remove the "origin/" prefix from remote branch names
-            LOCAL_BRANCH_NAME=$(echo "$branch" | sed 's|^origin/||')
+          COMMON_ANCESTOR=$(git merge-base "$CURRENT_BRANCH" "main")
 
-            echo "Checking merge-base between $CURRENT_BRANCH and $branch"
-
-            # Find the common ancestor commit with the current branch
-            BASE_COMMIT=$(git merge-base "$CURRENT_BRANCH" "$branch")
-            
-            # Ensure a common ancestor exists before proceeding
-            if [[ -n "$BASE_COMMIT" ]]; then
-              # Calculate the distance (number of commits) between the common ancestor and the current branch
-              DISTANCE=$(git rev-list --count "$BASE_COMMIT..$CURRENT_BRANCH")
-              
-              # Update the closest parent branch if this branch has the shortest distance
-              if [[ -z "$MIN_DISTANCE" || "$DISTANCE" -lt "$MIN_DISTANCE" ]]; then
-                MIN_DISTANCE=$DISTANCE
-                PARENT_BRANCH=$LOCAL_BRANCH_NAME
-              fi
-            fi
-          done
-          
-          # Output the detected parent branch
-          echo "Detected parent branch: $PARENT_BRANCH"
+          if git branch --contains "$COMMON_ANCESTOR" | grep -q "$CURRENT_BRANCH"; then
+            echo "$CURRENT_BRANCH is a child of $PARENT_BRANCH"
+          else
+            echo "$CURRENT_BRANCH is not a child of $PARENT_BRANCH"
+          fi
           
           # # Check if we are merging into 'main' and if the current branch is valid
           # if [[ "$PARENT_BRANCH" == "main" ]] && [[ ! "$CURRENT_BRANCH" =~ ^hotfix/.* ]] && [[ "$CURRENT_BRANCH" != "dev" ]]; then
