@@ -21,15 +21,23 @@ jobs:
           CURRENT_BRANCH: ${{ github.ref_name }} # The name of the created branch
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # Set the parent branch by finding the closest common ancestor branch
-          echo $(git show-branch)
-          # git show-branch | grep '\*'
-          # git show-branch | grep '\*' | grep -v "$(git rev-parse --abbrev-ref HEAD)"
-          # git show-branch | grep '\*' | grep -v "$(git rev-parse --abbrev-ref HEAD)" | head -n1
-          PARENT_BRANCH=$(git show-branch | grep '\*' | grep -v "$(git rev-parse --abbrev-ref HEAD)" | head -n1 | sed 's/.*\[\(.*\)\].*/\1/' | sed 's/[\^~].*//')
+          CANDIDATE_BRANCHES=("main" "dev")
 
+          PARENT_BRANCH=""
+          MIN_DISTANCE=""
 
-          echo "Detected PARENT_BRANCH as $PARENT_BRANCH for branch $CURRENT_BRANCH"
+          for candidate in "${CANDIDATE_BRANCHES[@]}"; do
+            BASE_COMMIT=$(git merge-base "$CURRENT_BRANCH" "origin/$candidate")
+            if [[ -n "$BASE_COMMIT" ]]; then
+              DISTANCE=$(git rev-list --count "$BASE_COMMIT".."$CURRENT_BRANCH")
+              if [[ -z "$MIN_DISTANCE" || "$DISTANCE" -lt "$MIN_DISTANCE" ]]; then
+                MIN_DISTANCE=$DISTANCE
+                PARENT_BRANCH=$candidate
+              fi
+            fi
+          done
+
+          echo "Detected parent branch: $PARENT_BRANCH"
 
           # Check if parent branch is `dev` and enforce naming conventions for branches created from `dev`
           if [[ "$PARENT_BRANCH" == "dev" ]] && [[ ! "$CURRENT_BRANCH" =~ ^(feature|task|fix)/.*$ ]]; then
