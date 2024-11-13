@@ -22,12 +22,13 @@ jobs:
         run: |
           git fetch --all
           COMMON_ANCESTOR=$(git merge-base "$CURRENT_BRANCH" "main")
+          echo "$COMMON_ANCESTOR"
 
-          if git branch --contains "$COMMON_ANCESTOR" | grep -q "$CURRENT_BRANCH"; then
-            echo "$CURRENT_BRANCH is a child of $PARENT_BRANCH"
-          else
-            echo "$CURRENT_BRANCH is not a child of $PARENT_BRANCH"
-          fi
+          # if git branch --contains "$COMMON_ANCESTOR" | grep -q "$CURRENT_BRANCH"; then
+          #   echo "$CURRENT_BRANCH is a child of $PARENT_BRANCH"
+          # else
+          #   echo "$CURRENT_BRANCH is not a child of $PARENT_BRANCH"
+          # fi
           
           # # Check if we are merging into 'main' and if the current branch is valid
           # if [[ "$PARENT_BRANCH" == "main" ]] && [[ ! "$CURRENT_BRANCH" =~ ^hotfix/.* ]] && [[ "$CURRENT_BRANCH" != "dev" ]]; then
