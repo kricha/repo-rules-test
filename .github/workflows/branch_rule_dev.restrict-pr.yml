@@ -1,0 +1,24 @@
+name: Check source branch for PRs into dev
+
+on:
+  pull_request:
+    branches:
+      - dev
+
+jobs:
+  check-source-branch-for-dev:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check if PR source branch into dev is right
+        env:
+          CURRENT_BRANCH: ${{ github.head_ref }}  # Source branch of the PR
+        run: |
+          # Set the parent branch by finding the closest common ancestor branch
+          PARENT_BRANCH=$(git show-branch | grep '*' | grep -v "$(git rev-parse --abbrev-ref HEAD)" | head -n1 | sed 's/.*\[\(.*\)\].*/\1/' | sed 's/[\^~].*//')
+
+          echo "Detected PARENT_BRANCH as $PARENT_BRANCH for branch $CURRENT_BRANCH"
+          if [[ "$PARENT_BRANCH" == "dev" ]] && [[ ! "$CURRENT_BRANCH" =~ ^(feat|feature|task|issue|fix)/.*$ ]]; then
+            echo "Error: Only PRs from 'feature/**' or 'task/**' or 'issue/**' or 'fix/**' branches are allowed to merge into 'dev'."
+            # exit 1
+          fi
