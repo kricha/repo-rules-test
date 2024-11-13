@@ -27,23 +27,7 @@ jobs:
           git fetch origin +${HEAD_REF}:${HEAD_REF}
           git checkout $CURRENT_BRANCH
           
-          CANDIDATE_BRANCHES=("main" "dev")
-
-          PARENT_BRANCH=""
-          MIN_DISTANCE=""
-
-          for candidate in "${CANDIDATE_BRANCHES[@]}"; do
-            BASE_COMMIT=$(git merge-base "$CURRENT_BRANCH" "origin/$candidate")
-            if [[ -n "$BASE_COMMIT" ]]; then
-              DISTANCE=$(git rev-list --count "$BASE_COMMIT..$CURRENT_BRANCH")
-              if [[ -z "$MIN_DISTANCE" || "$DISTANCE" -lt "$MIN_DISTANCE" ]]; then
-                MIN_DISTANCE=$DISTANCE
-                PARENT_BRANCH=$candidate
-              fi
-            fi
-          done
-
-          echo "Detected parent branch: $PARENT_BRANCH"
+          echo $(git show-branch -a | grep '\*' | grep -v `git rev-parse --abbrev-ref HEAD` | head -n1 | sed 's/.*\[\(.*\)\].*/\1/' | sed 's/[\^~].*//')
 
           
           # # Check if we are merging into 'main' and if the current branch is valid
