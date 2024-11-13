@@ -1,0 +1,36 @@
+name: Enforce Branch Naming Convention
+
+on:
+  create:  # Trigger on any branch creation
+
+jobs:
+  enforce-branch-naming:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v3
+
+      - name: Enforce naming convention
+        env:
+          CURRENT_BRANCH: ${{ github.ref_name }}  # The name of the created branch
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Set the parent branch by finding the closest common ancestor branch
+          PARENT_BRANCH=$(git show-branch | grep '*' | grep -v "$(git rev-parse --abbrev-ref HEAD)" | head -n1 | sed 's/.*\[\(.*\)\].*/\1/' | sed 's/[\^~].*//')
+
+          echo "Detected PARENT_BRANCH as $PARENT_BRANCH for branch $CURRENT_BRANCH"
+
+          # Check if parent branch is `dev` and enforce naming conventions for branches created from `dev`
+          if [[ "$PARENT_BRANCH" == "dev" ]] && [[ ! "$CURRENT_BRANCH" =~ ^(feature|task|issue|fix)/.*$ ]]; then
+            echo "Branch '$CURRENT_BRANCH' does not follow the naming convention ('feature/**', 'task/**', 'issue/**', or 'fix/**') when created from 'dev'. Deleting it."
+            git push origin --delete "$CURRENT_BRANCH"
+            exit 0  # Use exit 0 to mark the job as successful after deletion
+          fi
+
+          # Check if parent branch is `main` and enforce naming conventions for branches created from `main`
+          if [[ "$PARENT_BRANCH" == "main" ]] && [[ ! "$CURRENT_BRANCH" =~ ^hotfix/ ]] && [[ "$CURRENT_BRANCH" != "dev" ]]; then
+            echo "Branch '$CURRENT_BRANCH' does not follow the naming convention ('hotfix/**' or 'dev') when created from 'main'. Deleting it."
+            git push origin --delete "$CURRENT_BRANCH"
+            exit 0  # Use exit 0 to mark the job as successful after deletion
+          fi
