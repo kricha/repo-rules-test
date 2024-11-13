@@ -11,10 +11,10 @@ jobs:
       - name: Checkout the repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 0  # Fetch the full history for all branches
 
       - name: Fetch all branches
-        run: git fetch --all
+        run: git fetch --all 
           
       - name: Enforce naming convention
         env:
@@ -22,7 +22,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           # Set the parent branch by finding the closest common ancestor branch
-          PARENT_BRANCH=$(git show-branch | grep '*' | grep -v "$(git rev-parse --abbrev-ref HEAD)" | head -n1 | sed 's/.*\[\(.*\)\].*/\1/' | sed 's/[\^~].*//')
+          PARENT_BRANCH=$(git show-branch | grep '\*' | grep -v "$(git rev-parse --abbrev-ref HEAD)" | head -n1 | sed 's/.*\[\(.*\)\].*/\1/' | sed 's/[\^~].*//')
+
 
           echo "Detected PARENT_BRANCH as $PARENT_BRANCH for branch $CURRENT_BRANCH"
 
