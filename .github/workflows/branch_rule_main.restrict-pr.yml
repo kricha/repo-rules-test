@@ -21,6 +21,10 @@ jobs:
           PARENT_BRANCH: main
         run: |
           git fetch --all
+          GIT_BASE=${GITHUB_BASE_REF:-master}
+          HEAD_REF=$(echo ${{ github.ref }} | sed -e 's#/merge#/head#')
+          git fetch origin +${GIT_BASE}:${GIT_BASE}
+          git fetch origin +${HEAD_REF}:${HEAD_REF}
           git checkout $CURRENT_BRANCH
           COMMON_ANCESTOR=$(git merge-base "$CURRENT_BRANCH" "main")
           echo "$COMMON_ANCESTOR"
