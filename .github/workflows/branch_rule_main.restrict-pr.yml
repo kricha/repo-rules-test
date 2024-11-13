@@ -18,7 +18,7 @@ jobs:
           PARENT_BRANCH=$(git show-branch | grep '*' | grep -v "$(git rev-parse --abbrev-ref HEAD)" | head -n1 | sed 's/.*\[\(.*\)\].*/\1/' | sed 's/[\^~].*//')
 
           echo "Detected PARENT_BRANCH as $PARENT_BRANCH for branch $CURRENT_BRANCH"
-          if [[ "$PARENT_BRANCH" == "dev" ]] && [[ ! "$CURRENT_BRANCH" =~ ^(feature|task|issue|fix)/.*$ ]]; then
+          if [[ "$PARENT_BRANCH" == "main" ]] && [[ ! "$CURRENT_BRANCH" =~ ^hotfix/ ]] && [[ "$CURRENT_BRANCH" != "dev" ]]; then
             echo "Error: Only PRs from 'dev' or 'hotfix/*' branches are allowed to merge into 'main'."
             exit 1
           fi
