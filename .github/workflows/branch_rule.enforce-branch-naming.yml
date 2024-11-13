@@ -15,6 +15,25 @@ jobs:
 
       - name: Fetch all branches
         run: git fetch --all 
+
+      - name: Determine closest parent branch
+        run: |
+          CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+          PARENT_BRANCH=""
+          MIN_DISTANCE=""
+
+          for branch in $(git for-each-ref --format='%(refname:short)' refs/heads/ refs/remotes/ | grep -v "$CURRENT_BRANCH"); do
+            BASE_COMMIT=$(git merge-base "$CURRENT_BRANCH" "$branch")
+            if [[ -n "$BASE_COMMIT" ]]; then
+              DISTANCE=$(git rev-list --count "$BASE_COMMIT..$CURRENT_BRANCH")
+              if [[ -z "$MIN_DISTANCE" || "$DISTANCE" -lt "$MIN_DISTANCE" ]]; then
+                MIN_DISTANCE=$DISTANCE
+                PARENT_BRANCH=$branch
+              fi
+            fi
+          done
+
+          echo "Detected closest parent branch: $PARENT_BRANCH"
           
       - name: Enforce naming convention
         env:
