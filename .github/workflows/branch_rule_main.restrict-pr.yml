@@ -19,6 +19,8 @@ jobs:
         env:
           CURRENT_BRANCH: ${{ github.head_ref }} # Source branch of the PR
         run: |
+          CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+
           # Initialize variables to store the closest parent branch and minimum distance
           PARENT_BRANCH=""
           MIN_DISTANCE=""
@@ -30,7 +32,9 @@ jobs:
           for branch in $(git for-each-ref --format='%(refname:short)' refs/heads/ refs/remotes/ | grep -v "$CURRENT_BRANCH"); do
             # Remove the "origin/" prefix from remote branch names
             LOCAL_BRANCH_NAME=$(echo "$branch" | sed 's|^origin/||')
-          
+
+            echo "Checking merge-base between $CURRENT_BRANCH and $branch"
+
             # Find the common ancestor commit with the current branch
             BASE_COMMIT=$(git merge-base "$CURRENT_BRANCH" "$branch")
             
