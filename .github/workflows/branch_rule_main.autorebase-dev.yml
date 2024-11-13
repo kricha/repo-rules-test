@@ -31,7 +31,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Ensures full history is fetched for rebasing
+          fetch-depth: 0 # Ensures full history is fetched for rebasing
           token: ${{ steps.app-token.outputs.token }}
       - name: Fetch all branches
         run: git fetch --all

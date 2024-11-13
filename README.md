@@ -29,7 +29,7 @@
 
 ### branch_rule.enforce-branch-naming.yml
 
-Checks that new branch name created from **main** IS compatible with template `hotfix/**`, new branch created from **dev** IS compatible with template `^(feature|feat|task|issue|fix)/.*$`. If not - delete branch.
+Checks that new branch name created from **main** IS compatible with template `hotfix/**`, new branch created from **dev** IS compatible with template `^(feature|task|fix)/.*$`. If not - delete branch.
 
 ### branch_rule_main.restrict-pr.yml
 
@@ -41,7 +41,7 @@ Automatically rebase main onto dev branch after successful merge. Rebase is done
 
 ### branch_rule_dev.restrict-pr.yml
 
-Ensures that PRs to **dev** are create only from branches which names compatible with template `^(feature|feat|task|issue|fix)/.*$`. If not - dont allow to finish PR.
+Ensures that PRs to **dev** are create only from branches which names compatible with template `^(feature|task|fix)/.*$`. If not - dont allow to finish PR.
 
 ## Other
 

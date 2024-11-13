@@ -3,7 +3,7 @@ name: Enforce Dev and Hotfix Only PRs to Main
 on:
   pull_request:
     branches:
-      - main  # Trigger only on PRs targeting main
+      - main # Trigger only on PRs targeting main
 
 jobs:
   check-source-branch-for-main:
@@ -12,7 +12,7 @@ jobs:
     steps:
       - name: Check if PR source branch is dev or hotfix/*
         env:
-          CURRENT_BRANCH: ${{ github.head_ref }}  # Source branch of the PR
+          CURRENT_BRANCH: ${{ github.head_ref }} # Source branch of the PR
         run: |
           # Set the parent branch by finding the closest common ancestor branch
           PARENT_BRANCH=$(git show-branch | grep '*' | grep -v "$(git rev-parse --abbrev-ref HEAD)" | head -n1 | sed 's/.*\[\(.*\)\].*/\1/' | sed 's/[\^~].*//')
