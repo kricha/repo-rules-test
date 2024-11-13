@@ -47,3 +47,4 @@ Ensures that PRs to **dev** are create only from branches which names compatible
 
 Proposal is to use rebase and merge for pull requests to get consistent commit history in fin.
 Also we need to determine number of approvals for PRs in main and dev. If i forget something just let me know. In future there will be added other check for success passing PR like deployment, tests, security checks etc.
+
