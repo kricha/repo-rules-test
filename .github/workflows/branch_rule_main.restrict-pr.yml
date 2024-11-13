@@ -10,6 +10,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch the full history for all branches
+          
       - name: Check if PR source branch is dev or hotfix/*
         env:
           CURRENT_BRANCH: ${{ github.head_ref }} # Source branch of the PR
