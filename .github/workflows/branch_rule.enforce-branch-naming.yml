@@ -9,7 +9,7 @@ jobs:
 
     steps:
       - name: Checkout the repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@vv
 
       - name: Enforce naming convention
         env:
