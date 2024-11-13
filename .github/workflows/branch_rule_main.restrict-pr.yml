@@ -46,9 +46,12 @@ jobs:
               fi
             fi
           done
-
+          
+          # Output the detected parent branch
           echo "Detected parent branch: $PARENT_BRANCH"
-          if [[ "$PARENT_BRANCH" == "main" ]] && [[ ! "$CURRENT_BRANCH" =~ ^hotfix/ ]] && [[ "$CURRENT_BRANCH" != "dev" ]]; then
+          
+          # Check if we are merging into 'main' and if the current branch is valid
+          if [[ "$PARENT_BRANCH" == "main" ]] && [[ ! "$CURRENT_BRANCH" =~ ^hotfix/.* ]] && [[ "$CURRENT_BRANCH" != "dev" ]]; then
             echo "Error: Only PRs from 'dev' or 'hotfix/*' branches are allowed to merge into 'main'."
             exit 1
           fi
