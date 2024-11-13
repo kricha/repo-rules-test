@@ -10,7 +10,9 @@ jobs:
     steps:
       - name: Checkout the repository
         uses: actions/checkout@v4
-
+        with:
+          fetch-depth: 0
+          
       - name: Enforce naming convention
         env:
           CURRENT_BRANCH: ${{ github.ref_name }} # The name of the created branch
