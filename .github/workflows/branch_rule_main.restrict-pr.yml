@@ -10,28 +10,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          ref: ${{ github.head_ref }}
-          
       - name: Check if PR source branch is dev or hotfix/*
         env:
           CURRENT_BRANCH: ${{ github.head_ref }} # Source branch of the PR
-          PARENT_BRANCH: main
         run: |
-          git fetch --all
-          GIT_BASE=${GITHUB_BASE_REF:-main}
-          HEAD_REF=$(echo ${{ github.ref }} | sed -e 's#/merge#/head#')
-          git fetch origin +${GIT_BASE}:${GIT_BASE}
-          git fetch origin +${HEAD_REF}:${HEAD_REF}
-          git checkout $CURRENT_BRANCH
-          
-          echo $(git show-branch -a | grep '\*' | grep -v `git rev-parse --abbrev-ref HEAD` | head -n1 | sed 's/.*\[\(.*\)\].*/\1/' | sed 's/[\^~].*//')
-
-          
-          # # Check if we are merging into 'main' and if the current branch is valid
-          # if [[ "$PARENT_BRANCH" == "main" ]] && [[ ! "$CURRENT_BRANCH" =~ ^hotfix/.* ]] && [[ "$CURRENT_BRANCH" != "dev" ]]; then
-          #   echo "Error: Only PRs from 'dev' or 'hotfix/*' branches are allowed to merge into 'main'."
-          #   exit 1
-          # fi
+          # Check if we are merging into 'main' and if the current branch is valid
+          if [[ ! "$CURRENT_BRANCH" =~ ^hotfix/.* ]] && [[ "$CURRENT_BRANCH" != "dev" ]]; then
+            echo "Error: Only PRs from 'dev' or 'hotfix/*' branches are allowed to merge into 'main'."
+            exit 1
+          fi
