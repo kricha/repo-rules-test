@@ -81,7 +81,8 @@ jobs:
     name: Deploy apps to Azure Web App Docker
     runs-on: ubuntu-latest
     needs: build-dev
-    if: ${{ always() && !failure() && !cancelled() }}
+    # if: ${{ always() && !failure() && !cancelled() }}
+    if: ${{ always() && needs.build-dev.result == 'success' }}
     environment:
       name: dev
     steps:
