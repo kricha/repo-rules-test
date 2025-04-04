@@ -25,7 +25,7 @@ jobs:
           name: image-names
           path: image_names.env
 
-  check-paths:
+  check-paths: # Should run after setup
     runs-on: ubuntu-latest
     needs: setup
     outputs:
@@ -49,7 +49,7 @@ jobs:
             echo "should_build_base=true" >> $GITHUB_OUTPUT
           fi
 
-  build-base:
+  build-base: # Should run after check path if conditions met
     runs-on: ubuntu-latest
     needs: [setup, check-paths]
     if: needs.check-paths.outputs.should_build_base == 'true'
@@ -61,7 +61,7 @@ jobs:
         run: |
           echo "base build done...."
 
-  build-dev:
+  build-dev: # Should run after build base or after check path if build base skipped
     runs-on: ubuntu-latest
     needs: [setup, build-base]
     if: always()
@@ -76,10 +76,11 @@ jobs:
           echo "dev build done...."
 
 
-  deploy-dev:
+  deploy-dev: # Should run after build dev job complete
     name: Deploy apps to Azure Web App Docker
     runs-on: ubuntu-latest
     needs: build-dev
+    if: success()
     environment:
       name: dev
     steps:
