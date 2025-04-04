@@ -11,7 +11,7 @@ env:
 
 concurrency:
   group: build-and-deploy-${{ github.ref }}
-  cancel-in-progress: true  # Cancels previous runs if a new push happen
+  cancel-in-progress: true  # Cancels previous runs if a new push happe
 
 jobs:
   setup:
