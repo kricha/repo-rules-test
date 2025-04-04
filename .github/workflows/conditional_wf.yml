@@ -74,13 +74,13 @@ jobs:
       - name: Build dev
         run: |
           echo "dev build done...."
-      
+
 
   deploy-dev: # Should run after build dev job complete
     name: Deploy apps to Azure Web App Docker
     runs-on: ubuntu-latest
     needs: build-dev
-    if: success() || needs.build-dev.result == 'skipped'
+    if: ${{ always() && !failure() && !cancelled() }}
     environment:
       name: dev
     steps:
