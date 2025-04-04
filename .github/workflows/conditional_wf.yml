@@ -80,7 +80,6 @@ jobs:
     name: Deploy apps to Azure Web App Docker
     runs-on: ubuntu-latest
     needs: build-dev
-    if: always()
     environment:
       name: dev
     steps:
